@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f6fc">
+  <meta name="description" content="TaskFlow helps you organize tasks, manage priorities, and track productivity.">
+  <title>TaskFlow | Smart Task Management</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2 class="brand"><i class="fa-solid fa-layer-group"></i> TaskFlow</h2>
+      <p class="eyebrow">WORKSPACE</p>
+
+      <button class="nav active" data-filter="all">
+        <i class="fa-solid fa-table-columns"></i> All Tasks
+        <span class="nav-count" id="allNavCount">0</span>
+      </button>
+      <button class="nav" data-filter="active"><i class="fa-regular fa-clock"></i> In Progress</button>
+      <button class="nav" data-filter="completed"><i class="fa-solid fa-circle-check"></i> Completed</button>
+      <button class="nav" data-filter="today"><i class="fa-regular fa-calendar"></i> Due Today</button>
+
+      <div class="sidebar-divider"></div>
+      <p class="eyebrow">VIEWS</p>
+      <button class="nav view-nav active" data-view="tasks"><i class="fa-solid fa-list-check"></i> Task list</button>
+      <button class="nav view-nav" data-view="calendar"><i class="fa-regular fa-calendar-days"></i> Calendar</button>
+      <button class="nav view-nav" data-view="analytics"><i class="fa-solid fa-chart-pie"></i> Analytics</button>
+
+      <div class="sidebar-bottom">
+        <span class="focus-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <strong>Stay focused.</strong>
+        <small>Small steps. Big achievements.</small>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow accent">YOUR PERSONAL WORKSPACE</p>
+          <h1 id="welcomeTitle">Task Dashboard</h1>
+          <p class="subtitle" id="todayLabel">Welcome back! Let's make today productive.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn theme-toggle" id="themeToggle" type="button" title="Switch theme" aria-label="Switch theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+          <button class="icon-btn reminder-toggle" id="reminderToggle" type="button" title="Enable browser reminders" aria-label="Enable browser reminders">
+            <i class="fa-regular fa-bell"></i>
+          </button>
+          <div class="avatar" title="TaskFlow workspace">TF</div>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Task statistics">
+        <article class="stat stat-purple">
+          <span><i class="fa-solid fa-list-check"></i> Total tasks</span>
+          <strong id="total">0</strong>
+          <small>Everything on your list</small>
+        </article>
+        <article class="stat stat-amber">
+          <span><i class="fa-solid fa-hourglass-half"></i> In progress</span>
+          <strong id="activeCount">0</strong>
+          <small>Ready for your focus</small>
+        </article>
+        <article class="stat stat-green">
+          <span><i class="fa-solid fa-circle-check"></i> Completed</span>
+          <strong id="doneCount">0</strong>
+          <small>Progress worth celebrating</small>
+        </article>
+        <article class="stat stat-rose">
+          <span><i class="fa-solid fa-calendar-xmark"></i> Overdue</span>
+          <strong id="overdueCount">0</strong>
+          <small>Tasks needing attention</small>
+        </article>
+      </section>
+
+      <section class="overview-grid" id="overviewGrid">
+        <article class="overview-card progress-card">
+          <div class="overview-heading">
+            <div>
+              <p class="eyebrow">YOUR MOMENTUM</p>
+              <h3>Completion progress</h3>
+            </div>
+            <span class="overview-icon"><i class="fa-solid fa-bullseye"></i></span>
+          </div>
+          <div class="progress-line"><span id="progressBar"></span></div>
+          <div class="progress-meta">
+            <strong id="progressPercent">0%</strong>
+            <span id="progressText">No tasks completed yet</span>
+          </div>
+        </article>
+
+        <article class="overview-card focus-card">
+          <div class="overview-heading">
+            <div>
+              <p class="eyebrow">UP NEXT</p>
+              <h3>Coming up</h3>
+            </div>
+            <span class="overview-icon amber-icon"><i class="fa-regular fa-calendar-check"></i></span>
+          </div>
+          <p id="upNextText" class="up-next-text">Your upcoming tasks will appear here.</p>
+          <button class="text-button" id="showUpcomingBtn" type="button">
+            View tasks <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </article>
+      </section>
+
+      <section class="task-panel view-panel" id="tasksView">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">YOUR WORKFLOW</p>
+            <h2 id="listTitle">All Tasks</h2>
+            <p class="muted">Plan clearly. Prioritize thoughtfully. Get things done.</p>
+          </div>
+          <button class="primary" id="addBtn" type="button">
+            <i class="fa-solid fa-plus"></i> Add task
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="search" type="search" placeholder="Search your tasks..." aria-label="Search tasks">
+          </label>
+          <select id="priorityFilter" aria-label="Filter tasks by priority">
+            <option value="all">All priorities</option>
+            <option value="High">High priority</option>
+            <option value="Medium">Medium priority</option>
+            <option value="Low">Low priority</option>
+          </select>
+          <select id="sortFilter" aria-label="Sort tasks">
+            <option value="due">Sort: Due date</option>
+            <option value="priority">Sort: Priority</option>
+            <option value="created">Sort: Recently added</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Task details</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Due date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="taskList"></tbody>
+          </table>
+        </div>
+
+        <p id="empty" class="empty" hidden>
+          <i class="fa-regular fa-folder-open"></i>
+          <strong>No tasks found</strong>
+          <span>Add a task or adjust your search and filters.</span>
+        </p>
+      </section>
+
+      <section class="task-panel view-panel" id="calendarView" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">PLAN AHEAD</p>
+            <h2>Calendar</h2>
+            <p class="muted">See your deadlines at a glance.</p>
+          </div>
+          <div class="calendar-controls">
+            <button class="icon-btn" id="prevMonth" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>
+            <strong id="calendarMonth"></strong>
+            <button class="icon-btn" id="nextMonth" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="secondary" id="todayMonth" type="button">Today</button>
+          </div>
+        </div>
+
+        <div class="calendar-grid calendar-weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="calendar-grid" id="calendarDays"></div>
+
+        <div class="selected-day-panel">
+          <h3 id="selectedDateTitle">Select a date</h3>
+          <div id="selectedDateTasks" class="selected-date-tasks">
+            <p class="muted">Choose a day to see its tasks.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="task-panel view-panel" id="analyticsView" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">YOUR PRODUCTIVITY</p>
+            <h2>Analytics</h2>
+            <p class="muted">A quick overview of how your tasks are progressing.</p>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <article class="analytics-card">
+            <span class="analytics-symbol purple-symbol"><i class="fa-solid fa-chart-pie"></i></span>
+            <p>Completion rate</p>
+            <strong id="analyticsCompletion">0%</strong>
+            <div class="mini-track"><span id="analyticsCompletionBar"></span></div>
+          </article>
+          <article class="analytics-card">
+            <span class="analytics-symbol green-symbol"><i class="fa-solid fa-check-double"></i></span>
+            <p>Tasks completed</p>
+            <strong id="analyticsCompleted">0</strong>
+            <small>Keep your momentum going.</small>
+          </article>
+          <article class="analytics-card">
+            <span class="analytics-symbol rose-symbol"><i class="fa-solid fa-triangle-exclamation"></i></span>
+            <p>High priority open</p>
+            <strong id="analyticsHigh">0</strong>
+            <small>Consider tackling these first.</small>
+          </article>
+        </div>
+
+        <div class="analytics-lower">
+          <article class="overview-card">
+            <div class="overview-heading">
+              <div><p class="eyebrow">TASK MIX</p><h3>Priority breakdown</h3></div>
+            </div>
+            <div id="priorityBreakdown" class="priority-breakdown"></div>
+          </article>
+          <article class="overview-card">
+            <div class="overview-heading">
+              <div><p class="eyebrow">RECENT ACTIVITY</p><h3>Recently added</h3></div>
+            </div>
+            <div id="recentTasks" class="recent-tasks"></div>
+          </article>
+        </div>
+      </section>
+
+      <footer>
+        <p><i class="fa-solid fa-layer-group"></i> TaskFlow <span>·</span> Organize your day, your way.</p>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="taskDialog" aria-labelledby="formTitle">
+    <form id="taskForm">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow accent">TASK DETAILS</p>
+          <h2 id="formTitle">Create a task</h2>
+        </div>
+        <button type="button" id="closeBtn" class="close-btn" aria-label="Close task form">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="taskId">
+
+      <label for="taskTitle">Task title *</label>
+      <input id="taskTitle" type="text" required maxlength="100" placeholder="e.g. Complete project report">
+
+      <label for="taskDescription">Description</label>
+      <textarea id="taskDescription" rows="3" maxlength="500" placeholder="Add a few details about your task..."></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="taskPriority">Priority</label>
+          <select id="taskPriority">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+        </div>
+        <div>
+          <label for="taskDue">Due date *</label>
+          <input type="date" id="taskDue" required>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancelBtn">Cancel</button>
+        <button type="submit" class="primary"><i class="fa-solid fa-check"></i> Save task</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
